@@ -61,7 +61,7 @@ def haar_worker():
         working_frame = np.copy(frame)
         frame_lock.release()
 
-        output = cascade.detectMultiScale(frame, 1.3, 1)
+        output = cascade.detectMultiScale(frame, 1.2, 10)
 
         count_lock.acquire()
         count = len(output)
