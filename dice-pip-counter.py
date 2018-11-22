@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import threading
 import cv2
@@ -49,7 +51,7 @@ def naive_worker():
 
 def haar_worker():
     global frame, pips, count
-    cascade = cv2.CascadeClassifier('/home/filip/dice-pip-counter/dice-pip-counter/cascade.xml')
+    cascade = cv2.CascadeClassifier('dice-pip-counter-haar/out/cascade.xml')
 
     while True:
         if frame is None:
