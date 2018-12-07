@@ -1,3 +1,3 @@
 [submodule "dice-pip-counter-haar"]
 	path = dice-pip-counter-haar
-	url = https://gitlab.com/Makuslaw/dice-pip-counter-haar
+    url = https://github.com/makuslaw/dice-pip-counter-haar
