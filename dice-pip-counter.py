@@ -16,6 +16,7 @@ frame_lock = threading.Lock()
 pips_lock = threading.Lock()
 count_lock = threading.Lock()
 
+
 def naive_worker():
     global frame, pips, count
 
@@ -27,18 +28,23 @@ def naive_worker():
         working_frame = np.copy(frame)
         frame_lock.release()
 
-        working_frame = cv2.cvtColor(working_frame, cv2.COLOR_BGR2GRAY)
-        _, working_frame = cv2.threshold(working_frame, 125, 255, cv2.THRESH_BINARY)
+        working_frame = cv2.cvtColor(working_frame,
+                                     cv2.COLOR_BGR2GRAY)
+        _, working_frame = cv2.threshold(working_frame, 125, 255,
+                                         cv2.THRESH_BINARY)
         bw = np.zeros(working_frame.shape, dtype=np.uint8)
 
-        _, contours, hierarchy = cv2.findContours(working_frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        _, contours, hierarchy = cv2.findContours(working_frame,
+                                                  cv2.RETR_TREE,
+                                                  cv2.CHAIN_APPROX_SIMPLE)
         if hierarchy is not None:
             for i, h in enumerate(hierarchy[0]):
                 if h[3] != -1:
                     cv2.drawContours(bw, contours, i, 255, cv2.FILLED)
                     cv2.drawContours(orig, contours, i, COLOR_PURPLE, 3)
-        
-        _, contours, _ = cv2.findContours(bw, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        _, contours, _ = cv2.findContours(bw, cv2.RETR_TREE,
+                                          cv2.CHAIN_APPROX_SIMPLE)
 
         count_lock.acquire()
         count = len(contours)
@@ -75,9 +81,10 @@ def haar_worker():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('source', action='store', help='IP Camera URL' )
+    parser.add_argument('source', action='store', help='IP Camera URL')
     parser.add_argument('algorithm', action='store',
-            choices=['naive', 'haar'], help="Choose pip counting algorithm")
+                        choices=['naive', 'haar'],
+                        help='Choose pip counting algorithm')
 
     args = parser.parse_args()
 
@@ -87,9 +94,8 @@ if __name__ == '__main__':
         t = threading.Thread(target=naive_worker, daemon=True)
     elif args.algorithm == 'haar':
         t = threading.Thread(target=haar_worker, daemon=True)
-    
-    t.start()
 
+    t.start()
 
     while cv2.waitKey(1) & 0xFF != ord('q'):
         _, frame = vcap.read()
@@ -97,7 +103,9 @@ if __name__ == '__main__':
             orig = np.copy(frame)
 
             count_lock.acquire()
-            cv2.putText(orig, f'{count} pips', (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, COLOR_WHITE, 2, cv2.LINE_AA)
+            cv2.putText(orig, f'{count} pips', (10, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 2, COLOR_WHITE, 2,
+                        cv2.LINE_AA)
             count_lock.release()
 
             pips_lock.acquire()
